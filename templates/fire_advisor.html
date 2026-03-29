@@ -6,6 +6,7 @@
 <title>WealthSutra — Your Indian Financial Advisor</title>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
 <style>
   :root {
     --bg: #0a0e17;
@@ -63,9 +64,20 @@
   .input-prefix input { padding-left:26px; }
 
   .btn { padding:13px 28px; border-radius:10px; border:none; cursor:pointer; font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem; transition:all .2s; letter-spacing:.01em; }
-  .btn-primary { background:var(--accent); color:#000; width:100%; margin-top:24px; font-size:1rem; }
-  .btn-primary:hover { background:#fbbf24; transform:translateY(-1px); box-shadow:0 8px 24px rgba(245,158,11,.3); }
+ .btn-primary {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
 
+.btn-primary:hover {
+  transform: scale(1.03);
+}
   /* SCORE DASHBOARD */
   .score-hero { display:flex; align-items:center; gap:40px; background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; margin-bottom:28px; }
   .score-ring { position:relative; width:140px; height:140px; flex-shrink:0; }
@@ -78,6 +90,87 @@
   .score-info h2 { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; }
   .score-info p { color:var(--muted); margin-top:6px; line-height:1.6; }
   .score-badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:.8rem; font-weight:600; margin-top:10px; }
+
+.hint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.placeholder {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.fire-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.team-footer {
+  margin-top: 60px;
+  padding: 40px 20px;
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+}
+
+.footer-container h2 {
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+.team-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.team-card {
+  background: rgba(255,255,255,0.03);
+  padding: 20px;
+  border-radius: 14px;
+  width: 180px;
+  transition: 0.2s;
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+}
+
+.team-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  object-fit: cover;
+  border: 2px solid #f59e0b;
+}
+
+.team-card h4 {
+  margin: 5px 0;
+}
+
+.team-card p {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.footer-note {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.fire-inputs, .fire-result {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
 
   .cats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:28px; }
   .cat-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; }
@@ -288,7 +381,7 @@
       <input id="tax80D" placeholder="Insurance (80D) ₹" />
       <input id="taxHRA" placeholder="HRA (if applicable)" />
 
-      <button onclick="analyzeTax()">Analyze Tax</button>
+      <button class="btn-primary" onclick="analyzeTax()">Analyze Tax</button>
     </div>
 
     <!-- RESULT -->
@@ -348,18 +441,43 @@
 
 <!-- LIFE EVENT ADVISOR -->
 <div class="page" id="page-life">
-  <h2>💡 Life Event Advisor</h2>
 
-  <select id="lifeEvent">
-    <option value="marriage">Marriage</option>
-    <option value="car">Buying Car</option>
-    <option value="house">Buying House</option>
-    <option value="baby">New Baby</option>
-  </select>
+  <h2 class="section-title">💡 Life Event Advisor</h2>
 
-  <button onclick="planLife()">Get Advice</button>
+  <div class="fire-grid">
 
-  <div id="lifeResult"></div>
+    <!-- LEFT: INPUT -->
+    <div class="fire-inputs">
+      <h3>Select Life Event</h3>
+
+      <select id="lifeEvent">
+        <option value="marriage">💍 Marriage</option>
+        <option value="car">🚗 Buying Car</option>
+        <option value="house">🏠 Buying House</option>
+        <option value="baby">👶 New Baby</option>
+      </select>
+
+      <button class="btn-primary" onclick="planLife()">
+        🚀 Get Smart Advice
+      </button>
+
+      <p class="hint">
+        AI will analyze your finances and suggest a complete strategy.
+      </p>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="fire-result">
+      <h3>AI Strategy</h3>
+
+      <div id="lifeResult">
+        <div class="placeholder">
+          Your personalized life plan will appear here...
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- GOAL PLANNER -->
@@ -543,7 +661,7 @@ async function planLife() {
   const event = document.getElementById("lifeEvent").value;
 
   const box = document.getElementById("lifeResult");
-  box.innerHTML = "⏳ Analyzing...";
+  box.innerHTML = "⏳ Generating your life strategy...";
 
   const res = await fetch("http://127.0.0.1:5000/api/life-plan", {
     method: "POST",
@@ -552,9 +670,14 @@ async function planLife() {
   });
 
   const data = await res.json();
-  box.innerHTML = marked.parse(data.plan);
-}
 
+  if (data.error) {
+    box.innerHTML = "❌ " + data.error;
+    return;
+  }
+
+  box.innerHTML = `<div class="ai-report">${marked.parse(data.plan)}</div>`;
+}
 async function generateReport() {
   const session_id = localStorage.getItem("session_id");
 
@@ -854,5 +977,44 @@ async function sendMsg() {
 // ── INIT FIRE SLIDERS ──────────────────────────────────
 document.getElementById('postExpense').value = '';
 </script>
+<footer class="team-footer">
+
+  <div class="footer-container">
+
+    <h2>🚀 The CONQUERORS</h2>
+
+    <div class="team-grid">
+
+      <!-- MEMBER 1 -->
+      <div class="team-card">
+        <img src="{{ url_for('static', filename='images/priya.jpeg') }}" alt="Member 1">
+        <h4>Priyanshu Singh</h4>
+        <p>AI & Backend Developer</p>
+        <div class="social-links">
+    <a href="https://github.com/Celest14l" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/priyanshubeingcelestial/" target="_blank">LinkedIn</a>
+  </div>
+      </div>
+
+      <!-- MEMBER 2 -->
+      <div class="team-card">
+        <img src="{{ url_for('static', filename='images/dhee.jpeg') }}" alt="Member 2">
+        <h4>Dheeraj Shetty</h4>
+        <p>Frontend Developer & Database Administrator</p>
+        <div class="social-links">
+    <a href="https://github.com/ndheeraj-shetty" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/satya-dheeraj-nagasuri" target="_blank">LinkedIn</a>
+  </div>
+      </div>
+
+    </div>
+
+    <p class="footer-note">
+      Built with ❤️ using AI & Financial Intelligence
+    </p>
+
+  </div>
+
+</footer>
 </body>
 </html>
