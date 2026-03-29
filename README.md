@@ -101,7 +101,8 @@ wealthsutra/
 │   ├── score_service.py        ← Money Health Score logic (6 categories)
 │   ├── fire_service.py         ← SIP FV formula + corpus calculations
 │   └── ai_service.py           ← LLM integration (advisor, report, goal, tax)
-├── templates/                  ← HTML templates (if server-side rendering needed)
+├── templates/
+│   ├── fire_advisor.html        ← HTML template (if server-side rendering needed)
 └── instance/
     └── wealthsutra.db          ← SQLite DB (auto-created on first run)
 ```
