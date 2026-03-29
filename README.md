@@ -1,68 +1,158 @@
-# WealthSutra Backend
+# WealthSutra — AI Financial Health & Decision Platform
 
-Flask + SQLite backend for the WealthSutra Indian Financial Advisor platform.
+> An AI-powered financial planning and decision-making platform designed to help Indian users analyze their finances, plan goals, optimize taxes, and achieve financial independence.
+
+WealthSutra combines financial analytics with LLM-based intelligence to deliver personalized, actionable financial strategies.
 
 ---
 
-## Project Structure
+## 🔥 Features
+
+### 📊 Financial Health Score
+- Calculates overall financial health score (0–100)
+- Category-wise breakdown:
+  - Emergency Fund
+  - Debt Health
+  - Savings Rate
+  - Insurance
+  - Investments
+  - Retirement Readiness
+- Personalized improvement suggestions ranked by priority
+- Historical score tracking to monitor progress over time
+
+### 📈 FIRE Planner (Financial Independence, Retire Early)
+- Projects future wealth using SIP Future Value formula
+- Calculates corpus needed using the 25× rule (4% withdrawal rate)
+- Determines if user is on track for their target retirement age
+- Shows surplus/shortfall with exact rupee amounts
+- Scenario analysis: conservative (8%) / moderate (12%) / aggressive (15%)
+- Earliest achievable FIRE age calculation
+
+### 🤖 AI Financial Advisor
+- Chat-based financial assistant powered by LLM
+- Context-aware responses using full user financial profile
+- Answers questions like:
+  - SIP vs FD — which is better for me?
+  - How do I reduce my debt faster?
+  - What should I invest in given my risk appetite?
+- Persistent conversation history per session
+- One-click suggested questions to get started
+
+### 🎯 Smart Goal Planner *(NEW)*
+- Plan big financial goals: car, house, education, vacation, etc.
+- AI analyzes:
+  - Feasibility based on current income and savings
+  - Monthly savings required to hit the goal
+  - Loan vs savings strategy comparison
+  - Risks and personalized recommendations
+- Endpoint: `POST /api/goal-plan`
+
+### 💰 Tax Wizard *(NEW)*
+- AI-based tax optimization for Indian taxpayers
+- Supports:
+  - Old vs New tax regime comparison
+  - Section 80C, 80D, HRA deduction inputs
+- Outputs:
+  - Estimated tax liability under both regimes
+  - Missed deductions and how to claim them
+  - Tax-saving investment strategies (ELSS, NPS, PPF, etc.)
+  - Step-by-step action plan before March 31st
+- Endpoint: `POST /api/tax-plan`
+
+### 📄 AI Financial Report
+- Generates a full personalized financial health report
+- Combines Health Score + FIRE data into a narrative
+- Includes:
+  - Overall financial assessment
+  - Top financial problems and opportunities
+  - Step-by-step 90-day action plan
+- Endpoint: `GET /api/report/<session_id>`
+
+---
+
+## 🧠 Tech Stack
+
+| Layer     | Technology              |
+|-----------|-------------------------|
+| Frontend  | HTML, CSS, JavaScript   |
+| Backend   | Flask (Python)          |
+| Database  | SQLite (via SQLAlchemy) |
+| AI/LLM    | Groq                    |
+
+---
+
+## 📁 Project Structure
 
 ```
 wealthsutra/
-├── app.py                  ← Flask entry point
+├── app.py                      ← Flask entry point, registers all blueprints
 ├── requirements.txt
 ├── .env.example
 ├── models/
-│   └── models.py           ← SQLAlchemy models (UserProfile, HealthScore, FirePlan, ChatMessage)
-├── services/
-│   ├── score_service.py    ← Money Health Score logic
-│   ├── fire_service.py     ← FIRE calculator logic
-│   └── ai_service.py       ← Claude AI integration
+│   └── models.py               ← SQLAlchemy models (UserProfile, HealthScore, FirePlan, ChatMessage)
 ├── routes/
-│   ├── profile_routes.py   ← /api/profile
-│   ├── score_routes.py     ← /api/score
-│   ├── fire_routes.py      ← /api/fire
-│   └── chat_routes.py      ← /api/chat, /api/report
+│   ├── profile_routes.py       ← /api/profile
+│   ├── score_routes.py         ← /api/score
+│   ├── fire_routes.py          ← /api/fire
+│   ├── chat_routes.py          ← /api/chat, /api/report
+│   ├── goal_routes.py          ← /api/goal-plan
+│   └── tax_routes.py           ← /api/tax-plan
+├── services/
+│   ├── score_service.py        ← Money Health Score logic (6 categories)
+│   ├── fire_service.py         ← SIP FV formula + corpus calculations
+│   └── ai_service.py           ← LLM integration (advisor, report, goal, tax)
+├── templates/                  ← HTML templates (if server-side rendering needed)
 └── instance/
-    └── wealthsutra.db      ← SQLite DB (auto-created)
+    └── wealthsutra.db          ← SQLite DB (auto-created on first run)
 ```
 
 ---
 
-## Setup
+## ⚙️ Setup
 
 ```bash
-# 1. Clone / enter project
+# 1. Clone the repo
+git clone https://github.com/Celest14/WealthSutra_AI.git
 cd wealthsutra
 
-# 2. Create virtual environment
+# 2. Create and activate virtual environment
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # macOS / Linux
 
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Set environment variables
+# 4. Configure environment variables
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+# Edit .env and fill in:
+# GROQ_API_KEY=your_api_key_here
+# SECRET_KEY=your_random_secret
 
-# 5. Run
+# 5. Run the server
 python app.py
-# Server starts at http://localhost:5000
+# API available at http://localhost:5000
 ```
 
 ---
 
-## API Reference
+## 🔗 API Endpoints
 
 ### 🔑 Session Flow
-Every user gets a `session_id` (UUID) on first profile creation.
-Pass this `session_id` in every subsequent request body.
+Every user receives a `session_id` (UUID) on first profile creation.
+Pass this `session_id` in every subsequent request.
 
 ---
 
-### 1. Profile — `/api/profile`
+### Profile — `/api/profile`
 
-#### `POST /api/profile` — Create or update profile
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/profile` | Create or update user profile |
+| `GET` | `/api/profile/<session_id>` | Fetch existing profile |
+| `DELETE` | `/api/profile/<session_id>` | Delete profile and all data |
+
+**POST body:**
 ```json
 {
   "age": 28,
@@ -75,144 +165,119 @@ Pass this `session_id` in every subsequent request body.
   "insurance": "both",
   "risk": "moderate",
   "retire_age": 50,
-  "session_id": "optional-existing-uuid"
+  "session_id": "optional-for-updates"
 }
 ```
-**Response:**
-```json
-{
-  "session_id": "abc-123",
-  "profile": { ... },
-  "message": "Profile saved successfully."
-}
-```
-
-#### `GET /api/profile/<session_id>` — Fetch profile
-
-#### `DELETE /api/profile/<session_id>` — Delete profile + all data
 
 ---
 
-### 2. Money Health Score — `/api/score`
+### Health Score — `/api/score`
 
-#### `POST /api/score` — Calculate & save score
-```json
-{ "session_id": "abc-123", "save": true }
-```
-**Response:**
-```json
-{
-  "score": {
-    "total_score": 72.5,
-    "badge": "Good",
-    "categories": {
-      "emergency_fund": { "score": 100, "message": "...", "months_covered": 6.2 },
-      "debt_health":    { "score": 65,  "message": "..." },
-      "savings_rate":   { "score": 55,  "message": "..." },
-      "insurance":      { "score": 60,  "message": "..." },
-      "investments":    { "score": 70,  "message": "..." },
-      "retirement":     { "score": 80,  "message": "..." }
-    },
-    "suggestions": [
-      { "category": "Savings Rate", "icon": "📈", "score": 55, "action": "Increase SIP by ₹3,000..." }
-    ]
-  }
-}
-```
-
-#### `GET /api/score/history/<session_id>` — Score history (track progress)
-
-#### `POST /api/score/quick` — Stateless (no session needed)
-Pass raw profile fields directly.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/score` | Calculate and save health score |
+| `GET` | `/api/score/history/<session_id>` | Score history (track progress) |
+| `POST` | `/api/score/quick` | Stateless score (no session needed) |
 
 ---
 
-### 3. FIRE Planner — `/api/fire`
+### FIRE Planner — `/api/fire`
 
-#### `POST /api/fire` — Calculate FIRE plan
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/fire` | Calculate FIRE projection |
+| `GET` | `/api/fire/scenarios/<session_id>` | Conservative / Moderate / Aggressive scenarios |
+| `POST` | `/api/fire/quick` | Stateless FIRE calc |
+
+**POST body:**
 ```json
 {
   "session_id": "abc-123",
   "annual_return": 12,
   "inflation": 6,
   "post_expense": 60000,
-  "extra_sip": 3000,
-  "save": true
+  "extra_sip": 3000
 }
 ```
-**Response:**
-```json
-{
-  "fire": {
-    "inputs": { "years_to_retire": 22, "monthly_investment": 13000, ... },
-    "projections": {
-      "projected_corpus": 45000000,
-      "corpus_needed": 38000000,
-      "sip_future_value": 43000000,
-      "lumpsum_future_value": 2000000
-    },
-    "analysis": {
-      "gap": -7000000,
-      "is_on_track": true,
-      "progress_pct": 118.4,
-      "required_sip": 10500,
-      "shortfall_message": "You're on track! Expected surplus of ₹7,000,000.",
-      "earliest_fire_age": 48
-    }
-  }
-}
-```
-
-#### `GET /api/fire/scenarios/<session_id>` — 3 scenarios: conservative/moderate/aggressive
-
-#### `POST /api/fire/quick` — Stateless FIRE calc
 
 ---
 
-### 4. AI Advisor — `/api/chat`
+### AI Advisor — `/api/chat`
 
-#### `POST /api/chat` — Send a message
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/chat` | Send a message to the advisor |
+| `GET` | `/api/chat/history/<session_id>` | Full conversation history |
+| `DELETE` | `/api/chat/history/<session_id>` | Clear conversation |
+
+---
+
+### AI Report — `/api/report`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/report/<session_id>` | Generate full personalized financial report |
+
+---
+
+### Goal Planner — `/api/goal-plan` *(NEW)*
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/goal-plan` | Analyze a financial goal and get AI plan |
+
+**POST body:**
 ```json
 {
   "session_id": "abc-123",
-  "message": "Should I invest in SIP or FD?",
-  "include_history": true
+  "goal_name": "Buy a Car",
+  "goal_amount": 800000,
+  "target_months": 24
 }
 ```
-**Response:**
-```json
-{
-  "reply": "Given your income of ₹80,000 and moderate risk appetite, SIP in equity mutual funds will serve you far better than FDs right now..."
-}
-```
-
-#### `GET /api/chat/history/<session_id>` — Full conversation history
-
-#### `DELETE /api/chat/history/<session_id>` — Clear chat history
-
-#### `GET /api/report/<session_id>` — Generate full AI financial report
 
 ---
 
-## Insurance Values
-| Value   | Meaning               |
-|---------|-----------------------|
-| `none`  | No insurance          |
-| `health`| Health only           |
-| `term`  | Term life only        |
-| `both`  | Term + Health (ideal) |
+### Tax Wizard — `/api/tax-plan` *(NEW)*
 
-## Risk Values
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/tax-plan` | Get AI-powered tax optimization plan |
+
+**POST body:**
+```json
+{
+  "session_id": "abc-123",
+  "investments_80c": 100000,
+  "health_insurance_80d": 25000,
+  "hra_exemption": 60000,
+  "other_deductions": 0
+}
+```
+
+---
+
+## 📋 Reference Values
+
+### Insurance
+| Value | Meaning |
+|-------|---------|
+| `none` | No insurance |
+| `health` | Health insurance only |
+| `term` | Term life only |
+| `both` | Term + Health (recommended) |
+
+### Risk Appetite
 `conservative` · `moderate` · `aggressive`
 
 ---
 
-## Connecting the Frontend
+## 🔌 Connecting the Frontend
 
-In your `fire_advisor.html`, replace the direct Anthropic API calls with:
+Replace direct API calls in `fire_advisor.html` with backend calls:
 
 ```javascript
-// 1. Save profile
+// 1. Save profile → get session_id
 const res = await fetch('http://localhost:5000/api/profile', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -221,17 +286,55 @@ const res = await fetch('http://localhost:5000/api/profile', {
 const { session_id } = await res.json();
 localStorage.setItem('ws_session', session_id);
 
-// 2. Get score
+// 2. Get health score
 const score = await fetch('http://localhost:5000/api/score', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ session_id })
-});
+}).then(r => r.json());
 
-// 3. Chat
+// 3. Get FIRE plan
+const fire = await fetch('http://localhost:5000/api/fire', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ session_id, annual_return: 12, inflation: 6 })
+}).then(r => r.json());
+
+// 4. Chat
 const chat = await fetch('http://localhost:5000/api/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ session_id, message: userText })
-});
+}).then(r => r.json());
+
+// 5. Goal planner
+const goal = await fetch('http://localhost:5000/api/goal-plan', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ session_id, goal_name: 'Buy a Car', goal_amount: 800000, target_months: 24 })
+}).then(r => r.json());
+
+// 6. Tax wizard
+const tax = await fetch('http://localhost:5000/api/tax-plan', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ session_id, investments_80c: 100000, health_insurance_80d: 25000 })
+}).then(r => r.json());
 ```
+
+---
+
+## 🚀 Future Scope
+
+- Life Event Advisor (marriage, baby, home purchase planning)
+- WhatsApp chatbot integration
+- Portfolio analysis (MF X-Ray via CAMS PDF parser)
+- Multi-user / couple financial planning
+- Risk profiling via ML model
+- Tax filing integration
+
+---
+
+## 👨‍💻 Author
+
+Developed by [Celest14](https://github.com/Celest14)
