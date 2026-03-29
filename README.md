@@ -338,4 +338,4 @@ const tax = await fetch('http://localhost:5000/api/tax-plan', {
 
 ## 👨‍💻 Author
 
-Developed by [Celest14](https://github.com/Celest14)
+Developed by [Celest14](https://github.com/Celest14l) [ndheeraj-shetty](https://github.com/ndheeraj-shetty)
