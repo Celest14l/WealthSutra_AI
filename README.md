@@ -327,12 +327,10 @@ const tax = await fetch('http://localhost:5000/api/tax-plan', {
 
 ## 🚀 Future Scope
 
-- Life Event Advisor (marriage, baby, home purchase planning)
 - WhatsApp chatbot integration
 - Portfolio analysis (MF X-Ray via CAMS PDF parser)
 - Multi-user / couple financial planning
 - Risk profiling via ML model
-- Tax filing integration
 
 ---
 
